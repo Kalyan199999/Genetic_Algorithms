@@ -1,0 +1,13 @@
+package com.knapsack;
+
+import java.util.List;
+
+public class Selection {
+	
+	public static void selectSolution(List<Individual> population ,List<Individual> offsprings) {
+		
+		
+		
+		
+	}
+}

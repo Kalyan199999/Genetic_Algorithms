@@ -1,0 +1,27 @@
+package com.nsga;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
+
+class Temporary{
+	Set<Individual> set;
+	int n;
+	public Temporary() {
+		set = new HashSet<>();
+		n = 0;
+	}
+}
+
+public class AssignRank {
+	
+	public static void findRank(List<Individual> population) {
+		
+		Queue<PriorityQueue<Individual>> fronts = new LinkedList<>();
+		
+		
+	}
+
+}

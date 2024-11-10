@@ -1,0 +1,35 @@
+package com.generalframework;
+
+public class Individual {
+	
+	static double OBJECTIVE_VALUE;
+	static double FITNESS;
+	static int[] CHROMOSOME;
+	
+//	xbin store the decode value of each variable
+	static int[] XBIN;
+	
+//	stores the length of each decesion variable
+	static int[] DECISION_VARIABLE_LENGTH;
+	
+//	store the lower and upper bounds of each variable;
+	static int[] LOWER_BOUND;
+	static int[] UPPER_BOUND;
+	
+	public Individual(int length,int n) {
+		
+		CHROMOSOME = new int[length];
+		
+		LOWER_BOUND = new int[n];
+		
+		UPPER_BOUND = new int[n];
+		
+		XBIN = new int[n];
+		
+		DECISION_VARIABLE_LENGTH = new int[n];
+		
+		OBJECTIVE_VALUE = 0.0;
+		
+		FITNESS = 0.0;
+	}
+}

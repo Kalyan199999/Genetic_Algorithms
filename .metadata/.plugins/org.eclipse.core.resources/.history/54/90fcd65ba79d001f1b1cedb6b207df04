@@ -1,0 +1,10 @@
+package com.knapsack;
+
+import java.util.List;
+
+public class Survival {
+	
+	public static void survival(List<Individual> offsprings , List<Individual> offsprings) {
+		
+	}
+}

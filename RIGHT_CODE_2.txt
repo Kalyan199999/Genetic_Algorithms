@@ -1,0 +1,273 @@
+import numpy as np
+import heapq
+import matplotlib.pyplot as plt
+from scipy.special import erf, erfinv
+from sklearn.mixture import GaussianMixture
+from pyswarm import pso
+from scipy.optimize import minimize
+import pandapower as pp
+
+# Parameters
+T = 24  # Time period
+n_lines = 5  # Number of lines
+n_states = 10  # Number of SOC states
+max_soc = 100  # Max SOC
+min_soc = 20  # Min SOC
+P_target = np.random.normal(50, 5, T)  # Target peak power
+P_load = np.random.normal(50, 10, T)  # Actual load profile
+resistance_lines = np.random.uniform(low=0.1, high=1, size=(n_lines,))
+current_lines = np.random.uniform(low=1, high=10, size=(n_lines, T))
+charging_costs = np.random.uniform(low=0.1, high=0.5, size=(T,))
+discharging_costs = np.random.uniform(low=0.1, high=0.5, size=(T,))
+battery_degradation_costs = np.random.uniform(low=0.05, high=0.2, size=(T,))
+P_charge_max = 10
+P_discharge_max = 10
+P_plug_max = 15
+SOC_min_v2g = 30
+K = 0.5
+Cm = 50
+V = 400
+eta_ch = 0.9
+eta_dis = 0.9
+EPAR = 200
+peak_hours = range(17, 20)  # Define peak hours as 5 PM to 8 PM
+
+# Parameters for Load Generation using LHS
+mu_l = 50
+sigma_l = 10
+N = 1000
+
+# Generate stratified samples using LHS
+r = np.linspace(0, 1, N + 1)[:-1] + np.random.uniform(0, 1 / N, N)
+X = mu_l + sigma_l * np.sqrt(2) * erfinv(2 * r - 1)
+
+# Plot Load Generation
+plt.hist(X, bins=30, density=True, alpha=0.6, color='g')
+plt.title("Load Generation using LHS")
+plt.xlabel("Load Value")
+plt.ylabel("Density")
+plt.show()
+
+# Parameters for EV Connections/Disconnections
+N_h = 1000
+C_vph = 2
+PEL = 0.3
+total_time = 24
+
+# Calculate total EVs
+N_EV = int(N_h * C_vph * PEL)
+
+# Initialize event queue
+event_queue = []
+connection_times = np.random.uniform(0, total_time, N_EV)
+disconnection_times = np.random.uniform(0, total_time, N_EV)
+for time in connection_times:
+    heapq.heappush(event_queue, (time, 'connect'))
+for time in disconnection_times:
+    heapq.heappush(event_queue, (time, 'disconnect'))
+
+# Initialize EV state
+connected_evs = 0
+EV_log = []
+while event_queue:
+    event_time, event_type = heapq.heappop(event_queue)
+    if event_type == 'connect':
+        connected_evs += 1
+    elif event_type == 'disconnect':
+        connected_evs -= 1
+    EV_log.append((event_time, connected_evs))
+
+EV_log = np.array(EV_log)
+
+# Plot EV Connections and Disconnections
+plt.plot(EV_log[:, 0], EV_log[:, 1], marker='o')
+plt.title("EV Connections and Disconnections Over Time")
+plt.xlabel("Time (hours)")
+plt.ylabel("Number of Connected EVs")
+plt.show()
+
+# GMM for Arrival and Departure Times
+arrival_times = np.random.normal(10, 2, 500)
+departure_times = np.random.normal(18, 2, 500)
+
+gmm_arrival = GaussianMixture(n_components=2)
+gmm_arrival.fit(arrival_times.reshape(-1, 1))
+
+gmm_departure = GaussianMixture(n_components=2)
+gmm_departure.fit(departure_times.reshape(-1, 1))
+
+# Plot GMM
+plt.figure(figsize=(12, 6))
+plt.hist(arrival_times, bins=30, density=True, alpha=0.6, color='r', label='Arrival Times')
+plt.hist(departure_times, bins=30, density=True, alpha=0.6, color='b', label='Departure Times')
+plt.title("Histogram of Arrival and Departure Times with GMM")
+plt.xlabel("Time")
+plt.ylabel("Density")
+plt.legend()
+plt.show()
+
+# Daily Distance Traveled using Log-Normal Distribution
+mu_d = 3  # Mean of the natural log of distance
+sigma_d = 0.5  # Standard deviation of the natural log of distance
+
+# Generate daily distances
+d = np.random.lognormal(mean=mu_d, sigma=sigma_d, size=T)
+
+# Plot Daily Distances
+plt.hist(d, bins=30, density=True, alpha=0.6, color='b')
+plt.title("Daily Distance Traveled using Log-Normal Distribution")
+plt.xlabel("Distance (km)")
+plt.ylabel("Density")
+plt.show()
+
+# Energy Consumption Increment (ECI) on Highway
+Rc = 0.1  # Road coefficient
+Rand = np.random.uniform(0, 1, T)  # Random values between 0 and 1
+Phw = 0.3  # Probability of highway usage
+
+# Calculate ECI for each day
+ECI_hw = Rc * (1 + Rand) * Phw
+
+# Define TOU charging demand and time
+def tou_charging_demand(SOC, P_charge, peak_hours, current_hour):
+    if SOC_min_v2g < SOC < max_soc and current_hour not in peak_hours:
+        return P_charge * max_soc
+    else:
+        return 0
+
+def tou_charging_time(current_hour, peak_hours):
+    return 1 if current_hour not in peak_hours else 0
+
+# Create Pandapower Network
+net = pp.create_empty_network()
+
+# Create Buses
+buses = []
+for i in range(n_states):
+    buses.append(pp.create_bus(net, vn_kv=20, name=f"Bus {i+1}"))
+
+# Create Lines
+for i in range(n_lines):
+    pp.create_line(net, from_bus=buses[i % n_states], to_bus=buses[(i + 1) % n_states],
+                   length_km=1, std_type="NAYY 4x50 SE", name=f"Line {i+1}")
+
+# Create Loads and Generators at each bus
+P_load_mw = P_load / 1000  # Convert from kW to MW
+for i in range(n_states):
+    pp.create_load(net, bus=buses[i], p_mw=P_load_mw[i % len(P_load_mw)], name=f"Load {i+1}")
+    pp.create_gen(net, bus=buses[i], p_mw=0, name=f"Gen {i+1}")
+
+# Define objective function
+def objective(x):
+    P_load_opt = x[:T]
+    P_charge = x[T:2*T]
+    P_discharge = x[2*T:3*T]
+    SOC = np.zeros(T)
+    SOC[0] = min_soc  # Initial SOC
+    
+    # Calculate SOC
+    for t in range(1, T):
+        SOC[t] = SOC[t-1] + (K * Cm / V) * (P_charge[t] * eta_ch - P_discharge[t] / eta_dis) * 1
+    
+    # Peak Load Minimization
+    peak_load_error = np.sum((P_load_opt - P_target) ** 2)
+    
+    # Power Loss Minimization
+    power_loss = np.sum([resistance_lines[l] * current_lines[l, t]**2 for l in range(n_lines) for t in range(T)])
+    
+    # Cost Minimization
+    charging_cost = np.sum(P_charge * charging_costs)
+    discharging_cost = np.sum(P_discharge * discharging_costs)
+    battery_degradation_cost = np.sum(SOC * battery_degradation_costs)
+    tou_cost = np.sum([tou_charging_demand(SOC[t], P_charge[t], peak_hours, t) for t in range(T)])
+    eci_cost = np.sum(ECI_hw)
+    
+    total_cost = charging_cost + discharging_cost + battery_degradation_cost + tou_cost + eci_cost
+    
+    # Update network with load and generation profiles
+    for i in range(n_states):
+        net.load.p_mw[i % len(P_load_mw)] = P_load_opt[i % len(P_load_opt)]
+        net.gen.p_mw[i % len(P_load_mw)] = P_charge[i % len(P_charge)] - P_discharge[i % len(P_discharge)]
+    
+    # Run power flow analysis
+    pp.runpp(net)
+    
+    # Extract results
+    voltage_deviation = np.sum(np.abs(net.res_bus.vm_pu - 1))
+    
+    return peak_load_error + power_loss + total_cost + voltage_deviation
+
+# Define constraints
+def constraints(x):
+    constraints_list = []
+    
+    # Maximum Charging Power Constraint
+    constraints_list.append(lambda x: P_plug_max - np.max(x[T:2*T]))
+    
+    # Maximum Discharging Power Constraint
+    constraints_list.append(lambda x: P_plug_max - np.max(x[2*T:3*T]))
+    
+    # EV Parking Status Constraint
+    constraints_list.append(lambda x: np.sum(x[T:2*T]) - np.sum(x[2*T:3*T]))
+    
+    # SOC Constraints
+    SOC = np.zeros(T)
+    SOC[0] = min_soc
+    for t in range(1, T):
+        SOC[t] = SOC[t-1] + (K * Cm / V) * (x[T + t] * eta_ch - x[2 * T + t] / eta_dis) * 1
+    constraints_list.append(lambda x: SOC_min_v2g - np.min(SOC))
+    constraints_list.append(lambda x: np.max(SOC) - max_soc)
+    
+    # Active Power Balance Constraint
+    constraints_list.append(lambda x: np.sum(P_load) - np.sum(P_target))
+    
+    # Reactive Power Balance Constraint (assuming similar constraints)
+    constraints_list.append(lambda x: np.sum(P_load) - np.sum(P_target))
+    
+    # Charging and Discharging Priority
+    SOC_sorted_indices = np.argsort(SOC)
+    low_SOC_indices = SOC_sorted_indices[SOC < SOC_min_v2g]
+    normal_SOC_indices = SOC_sorted_indices[(SOC >= SOC_min_v2g) & (SOC <= max_soc)]
+    high_SOC_indices = SOC_sorted_indices[SOC > max_soc]
+    
+    for idx in low_SOC_indices:
+        constraints_list.append(lambda x: x[T + idx] - P_charge_max)
+    
+    for idx in high_SOC_indices:
+        constraints_list.append(lambda x: x[2 * T + idx] - P_discharge_max)
+    
+    return constraints_list
+
+# PSO Optimization
+def pso_optimization():
+    lb = [0] * 3 * T  # Lower bounds for P_load, P_charge, P_discharge
+    ub = [P_plug_max] * 3 * T  # Upper bounds for P_load, P_charge, P_discharge
+
+    def constraint_func(x):
+        return [c(x) for c in constraints(x)]
+
+    def constraint_func_ineq(x):
+        return np.array(constraint_func(x)) > 0
+
+    optimal_solution, _ = pso(objective, lb, ub, f_ieqcons=constraint_func_ineq, swarmsize=50, maxiter=100, debug=True)
+    
+    return optimal_solution
+
+# Run PSO Optimization
+optimal_solution = pso_optimization()
+
+# Extract optimal profiles
+P_load_optimal = optimal_solution[:T]
+P_charge_optimal = optimal_solution[T:2*T]
+P_discharge_optimal = optimal_solution[2*T:3*T]
+
+# Plot Optimal Profiles
+plt.figure(figsize=(12, 8))
+plt.plot(P_load_optimal, label="Optimal Load Profile")
+plt.plot(P_charge_optimal, label="Optimal Charging Profile")
+plt.plot(P_discharge_optimal, label="Optimal Discharging Profile")
+plt.title("Optimal Load, Charging, and Discharging Profiles")
+plt.xlabel("Time (hours)")
+plt.ylabel("Power (MW)")
+plt.legend()
+plt.show()

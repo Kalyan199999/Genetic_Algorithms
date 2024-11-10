@@ -1,0 +1,26 @@
+package com.generalframework;
+
+class Individual {
+	
+	static OBJECTIVE_VALUE;
+	double FITNESS;
+	int[] CHROMOSOME;
+	int[] XBIN;
+	int[] LOWER_BOUND;
+	int[] UPPER_BOUND;
+	
+	public Individual(int length,int n) {
+		
+		CHROMOSOME = new int[length];
+		
+		LOWER_BOUND = new int[n];
+		
+		UPPER_BOUND = new int[n];
+		
+		XBIN = new int[n];
+		
+		OBJECTIVE_VALUE = 0.0;
+		
+		FITNESS = 0.0;
+	}
+}

@@ -1,0 +1,23 @@
+package com.knapsack;
+
+import java.util.List;
+import java.util.Random;
+
+public class Selection {
+	
+	public static void selectSolution(List<Individual> population ,List<Individual> offsprings) {
+		
+		Random random = new Random();
+		
+		while(!population.isEmpty())
+		{
+			Individual parent_1 = population.remove( random.nextInt(population.size()) );
+			Individual parent_2 = population.remove( random.nextInt(population.size()) );
+			
+			Individual c1 = new Individual(parent_1.chromosome.length);
+			Individual c1 = new Individual(parent_1.chromosome.length);
+		}
+		
+		
+	}
+}

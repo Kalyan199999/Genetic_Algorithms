@@ -1,0 +1,31 @@
+package com.nsga;
+
+import java.util.List;
+import java.util.Random;
+
+public class Mutation {
+	
+	static double pm ;
+	static double n_m = 15;
+	
+	static Random random  = new Random();
+	
+	private static double calculate_delta() {
+		double res = 0.0;
+		double r = random.nextDouble(0,1);
+		
+		
+		
+		
+		return res;
+	}
+	
+	public static void mutate(List<Individual> population , List<Individual> offsprings) {
+		
+		int N = population.size();
+		pm = 1 / N;
+		
+		
+	}
+
+}

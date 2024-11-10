@@ -1,0 +1,19 @@
+package com.knapsack;
+
+import java.util.List;
+import java.util.Random;
+
+public class Selection {
+	
+	public static void selectSolution(List<Individual> population ,List<Individual> offsprings) {
+		
+		Random random = new Random();
+		
+		while(!population.isEmpty())
+		{
+			Individual parent = population.remove( random.nextInt(population) )
+		}
+		
+		
+	}
+}

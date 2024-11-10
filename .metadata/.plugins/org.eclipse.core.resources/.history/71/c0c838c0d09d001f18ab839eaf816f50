@@ -1,0 +1,8 @@
+package com.zdt1;
+
+public class Scaling {
+	
+	public static void scale() {
+		
+	}
+}

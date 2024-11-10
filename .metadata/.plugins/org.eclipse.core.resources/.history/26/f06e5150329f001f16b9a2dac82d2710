@@ -1,0 +1,80 @@
+package com.nsga;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
+
+class Temporary{
+	Set<Individual> set;
+	int n;
+	public Temporary() {
+		set = new HashSet<>();
+		n = 0;
+	}
+}
+
+public class AssignRank {
+	
+	static int N ;
+	
+	private static boolean checkDominance(Individual soln_1 , Individual soln_2)
+	{
+		
+		return true;
+	}
+	
+	private static void stage_1(List<Individual> population , PriorityQueue<Individual> queue ,List<Temporary> ranks) {
+		
+		for(int i=0;i<N;i++)
+		{
+			int n = population.get(i).objectives.length;
+			
+			
+			for(int j=0; j<N && i!=j;j++)
+			{
+//				
+				
+				if(true)
+				{
+					ranks.get(i).set.add(population.get(j));
+				}
+				else {
+					ranks.get(i).n += 1;
+				}
+			}
+			
+			if(ranks.get(i).n == 0)
+			{
+				population.get(i).rank = 1;
+				queue.offer(population.get(i));
+			}
+		}
+		
+	}
+	
+	public static void findRank(List<Individual> population) {
+		
+		Queue<PriorityQueue<Individual>> fronts = new LinkedList<>();
+		
+		List<Temporary> ranks = new ArrayList<Temporary>();
+		
+		N =population.size();
+		
+		for(int i=0;i<N;i++)
+		{
+			ranks.add(new Temporary());
+		}
+		
+		PriorityQueue<Individual> queue = new PriorityQueue<Individual>((a,b)-> (int) b.crowding_distance - (int) a.crowding_distance);
+		
+		stage_1(population, queue, ranks);
+		fronts.add(queue);
+		
+		
+	}
+
+}

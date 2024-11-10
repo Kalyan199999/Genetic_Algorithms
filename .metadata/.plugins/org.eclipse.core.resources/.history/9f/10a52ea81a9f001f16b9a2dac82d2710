@@ -1,0 +1,13 @@
+package com.nsga;
+
+import java.util.List;
+
+public class Mutation {
+	
+	
+	public static void mutate(List<Individual> population , List<Individual> offsprings) {
+		
+		int N = 
+	}
+
+}

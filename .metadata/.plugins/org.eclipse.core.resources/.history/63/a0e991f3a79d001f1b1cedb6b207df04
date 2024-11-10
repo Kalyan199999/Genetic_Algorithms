@@ -1,0 +1,73 @@
+package com.knapsack;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+	
+	public static void show(List<Individual> currPopulation) {
+		
+		for(Individual ind:currPopulation)
+		{
+			for(int x:ind.chromosome)
+			{
+				System.out.print(x+" ");
+			}
+			System.out.println(ind.fitness);
+		}
+		
+		System.out.println("*******************************");
+	}
+
+	public static void main(String[] args) {
+		
+//		No.of items
+		int n_items = 4;
+		int[] weight = {10,5,25,15};
+		int[] prices = {10,8,7,12};
+		int bag_weight = 25;
+		
+		int N = 10;
+		List<Individual> currPopulation = new ArrayList<Individual>();
+		
+		for(int i=0;i<N;i++)
+		{
+			currPopulation.add(new Individual(n_items));
+		}
+		
+		Population.generatePopulation(currPopulation, N);
+		Evaluation.evaluate(currPopulation, weight, prices, bag_weight);
+		
+		
+		
+		int t = 1 , T = 2;
+		
+		while(t < T)
+		{
+			show(currPopulation);
+			
+			List<Individual> selected = new ArrayList<Individual>();
+			Selection.selectSolution(currPopulation, selected);
+			show(selected);
+			
+			List<Individual> offsprings = new ArrayList<Individual>();
+			CrossOver.crossOver(selected, offsprings);
+			
+			Mutation.mutate(offsprings);
+			Evaluation.evaluate(offsprings, weight, prices, bag_weight);
+			
+			show(offsprings);
+			
+			List<Individual> survive = new ArrayList<Individual>();
+			
+			Survival.survival(currPopulation, offsprings, survive);
+			
+			currPopulation.clear();
+			currPopulation.addAll(survive);
+
+			t++;
+		}
+
+	}
+
+}

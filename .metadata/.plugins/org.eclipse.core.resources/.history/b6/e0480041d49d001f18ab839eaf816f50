@@ -1,0 +1,43 @@
+package com.zdt1;
+
+
+import java.util.List;
+
+public class Evaluate {
+	
+	public static void evaluate(List<Individual> population ) {
+		
+		for(Individual ind : population)
+		{
+			double fit = 0;
+			
+			for(int i=0;i<ind.objectives.length;i++)
+			{
+				switch (i) {
+				
+				case 0: {
+					
+					ind.objectives[i] = ind.X[0];
+					fit += ind.X[0];
+					break;
+				}
+               case 1: {
+					
+					ind.objectives[i] = ind.X[0];
+					fit += ind.X[0];
+					break;
+				}case 0: {
+					
+					ind.objectives[i] = ind.X[0];
+					fit += ind.X[0];
+					break;
+				}
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + i);
+				}
+			}
+		}
+		
+		
+	}
+}

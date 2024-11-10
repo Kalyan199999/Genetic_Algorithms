@@ -1,0 +1,12 @@
+package com.knapsack;
+
+public class Individual {
+	
+	static int[] chromosome;
+	
+	static double fitness;
+	
+	Individual(int n){
+		chromosome = new int[n]
+	}
+}

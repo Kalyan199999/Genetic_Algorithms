@@ -1,0 +1,13 @@
+package com.generalframework;
+
+public class Individual {
+	
+	double 	OBJECTIVE_VALUE;
+	double FITNESS;
+	int[] CHROMOSOME;
+	int[] XBIN;
+	
+	public Individual(int length,int n) {
+		CHROMOSOME = new int[length];
+	}
+}

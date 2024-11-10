@@ -1,0 +1,11 @@
+package com.knapsack;
+
+import java.util.List;
+
+public class Evaluation {
+	
+	public static void evaluate(List<Individual> population) {
+		
+		
+	}
+}

@@ -1,0 +1,10 @@
+package com.knapsack;
+
+public class Individual {
+	
+	int[] chromosome ;
+	
+	Individual(){
+		
+	}
+}

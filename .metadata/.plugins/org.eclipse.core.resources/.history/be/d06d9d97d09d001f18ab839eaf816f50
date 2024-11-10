@@ -1,0 +1,13 @@
+package com.zdt1;
+
+public class Individual {
+	
+	double[] objectives;
+	
+	double fitness;
+	
+	double[] X;
+	
+	double lower = 0 , upper = 1;
+
+}

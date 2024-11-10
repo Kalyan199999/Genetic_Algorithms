@@ -1,0 +1,17 @@
+package com.zdt1;
+
+
+import java.util.List;
+
+public class Evaluate {
+	
+	public static void evaluate(List<Individual> population ) {
+		
+		for(Individual ind : population)
+		{
+			double fit = 0;
+		}
+		
+		
+	}
+}

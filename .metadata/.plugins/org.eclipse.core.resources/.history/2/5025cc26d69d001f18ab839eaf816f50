@@ -1,0 +1,52 @@
+package com.zdt1;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+	
+	public static void show(List<Individual> population) {
+		
+		for(Individual ind:population)
+		{
+//			for(int x:ind.chromosome)
+//			{
+//				System.out.print(x+" ");
+//			}
+			
+			for(double x:ind.objectives)
+			{
+				System.out.print(x+" ");
+			}
+			
+			for(double x:ind.X)
+			{
+				System.out.print(x+" ");
+			}
+			
+			
+//			System.out.println(ind.fitness);
+			System.out.println();
+			System.out.println("**********************************************************************************************************************************************");
+		}
+		
+	}
+
+	public static void main(String[] args) {
+		
+		List<Individual> population = new ArrayList<Individual>();
+		int N = 10;
+		
+		for(int i=0;i<N;i++)
+		{
+			population.add(new Individual(3, 30, 1));
+		}
+		
+		Generate.generatePopulation(population, N);
+		Scaling.scale(population, N);
+		Evaluate.evaluate(population);
+		show(population);
+
+	}
+
+}

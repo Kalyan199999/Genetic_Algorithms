@@ -1,0 +1,8 @@
+package com.generalframework;
+
+public class Individual {
+	
+	
+	public Individual() {
+	}
+}

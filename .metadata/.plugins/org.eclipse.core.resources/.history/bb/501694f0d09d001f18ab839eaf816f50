@@ -1,0 +1,20 @@
+package com.zdt1;
+
+public class Individual {
+	
+	double[] objectives;
+	
+	double fitness;
+	
+	int[] chromosome;
+	
+	double[] X;
+	
+	double lower = 0 , upper = 1;
+	
+	public Individual(int n_objective) {
+		
+	}
+	
+
+}

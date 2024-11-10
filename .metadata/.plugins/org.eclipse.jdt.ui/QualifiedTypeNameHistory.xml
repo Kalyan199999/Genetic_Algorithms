@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="com.moop.MultiObjective"/>
+    <fullyQualifiedTypeName name="com.Nsga_2"/>
+    <fullyQualifiedTypeName name="java.io.PipedOutputStream"/>
+    <fullyQualifiedTypeName name="java.util.Scanner"/>
+    <fullyQualifiedTypeName name="java.lang.System"/>
+    <fullyQualifiedTypeName name="java.util.Collections"/>
+    <fullyQualifiedTypeName name="java.util.Comparator"/>
+    <fullyQualifiedTypeName name="com.generalframework.ComparatorSort"/>
+    <fullyQualifiedTypeName name="com.generalframework.Algorithm"/>
+    <fullyQualifiedTypeName name="com.generalframework.EvaluateObjectives"/>
+    <fullyQualifiedTypeName name="com.generalframework.Individual"/>
+    <fullyQualifiedTypeName name="com.knapsack.Evaluation"/>
+    <fullyQualifiedTypeName name="com.knapsack.Population"/>
+    <fullyQualifiedTypeName name="com.knapsack.Selection"/>
+    <fullyQualifiedTypeName name="com.knapsack.CrossOver"/>
+    <fullyQualifiedTypeName name="com.knapsack.Mutation"/>
+    <fullyQualifiedTypeName name="com.knapsack.Individual"/>
+    <fullyQualifiedTypeName name="java.util.PriorityQueue"/>
+    <fullyQualifiedTypeName name="com.knapsack.Survival"/>
+    <fullyQualifiedTypeName name="java.lang.IncompatibleClassChangeError"/>
+    <fullyQualifiedTypeName name="double"/>
+    <fullyQualifiedTypeName name="com.zdt1.Generate"/>
+    <fullyQualifiedTypeName name="com.zdt1.Individual"/>
+    <fullyQualifiedTypeName name="com.zdt1.Scaling"/>
+    <fullyQualifiedTypeName name="com.zdt1.Selection"/>
+    <fullyQualifiedTypeName name="com.zdt1.CrossOver"/>
+    <fullyQualifiedTypeName name="com.zdt1.Mutation"/>
+    <fullyQualifiedTypeName name="com.zdt1.Evaluate"/>
+    <fullyQualifiedTypeName name="com.nsga.Generate"/>
+    <fullyQualifiedTypeName name="java.lang.Double"/>
+    <fullyQualifiedTypeName name="com.nsga.Evaluate"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="java.util.Random"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="com.nsga.Individual"/>
+</qualifiedTypeNameHistroy>

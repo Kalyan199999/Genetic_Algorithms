@@ -1,0 +1,16 @@
+package com.knapsack;
+
+import java.util.List;
+import java.util.PriorityQueue;
+
+public class Survival {
+	
+	public static void survival(List<Individual> population , List<Individual> offsprings) {
+		
+		PriorityQueue<Individual> queue = new PriorityQueue<Individual>((x,y) -> (int)y.fitness - (int) x.fitness);
+		for(int i=0;i<offsprings.size();i++)
+		{
+			
+		}
+	}
+}

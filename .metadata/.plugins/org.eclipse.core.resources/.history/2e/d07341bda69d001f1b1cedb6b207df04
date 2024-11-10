@@ -1,0 +1,8 @@
+package com.knapsack;
+
+public class Mutation {
+	
+	public static void mutate() {
+		
+	}
+}

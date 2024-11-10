@@ -1,0 +1,19 @@
+package com.nsga;
+
+import java.util.HashSet;
+import java.util.Set;
+
+class Temporary{
+	Set<Individual> set;
+	int n;
+	public Temporary() {
+		set = new HashSet<>();
+		n = 0;
+	}
+}
+
+public class AssignRank {
+	
+	
+
+}

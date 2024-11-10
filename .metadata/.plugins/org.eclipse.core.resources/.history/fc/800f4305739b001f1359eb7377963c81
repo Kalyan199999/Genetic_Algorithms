@@ -1,0 +1,10 @@
+package com.generalframework;
+
+public class Individual {
+	
+	double 	OBJECTIVE_VALUE;
+	double fitness;
+	
+	public Individual() {
+	}
+}

@@ -1,0 +1,22 @@
+package com.knapsack;
+
+import java.util.List;
+import java.util.Random;
+
+public class CrossOver {
+	
+	public static void crossOver(List<Individual> population ,List<Individual> offsprings) {
+		Random random = new Random();
+		
+		while(!population.isEmpty())
+		{
+			Individual parent_1 = population.remove( random.nextInt(0,population.size()) );
+			Individual parent_2 = population.remove( random.nextInt(0,population.size()) );
+			
+			Individual c1 = new Individual(parent_1.chromosome.length);
+			Individual c2 = new Individual(parent_1.chromosome.length);
+			
+		}
+		
+	}
+}

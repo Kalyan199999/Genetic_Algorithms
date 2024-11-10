@@ -1,0 +1,14 @@
+package com.knapsack;
+
+import java.util.List;
+
+public class CrossOver {
+	
+	public static void crossOver(List<Individual> offsprings) {
+		
+		
+		
+		
+		
+	}
+}

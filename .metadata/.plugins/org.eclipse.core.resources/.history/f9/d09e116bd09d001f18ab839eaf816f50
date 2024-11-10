@@ -1,0 +1,7 @@
+package com.zdt1;
+
+public class Individual {
+	
+	double[] objectives;
+
+}

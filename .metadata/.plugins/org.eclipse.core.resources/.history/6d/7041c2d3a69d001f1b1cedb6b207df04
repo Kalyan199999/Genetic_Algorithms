@@ -1,0 +1,15 @@
+package com.knapsack;
+
+import java.util.List;
+import java.util.Random;
+
+public class Mutation {
+	
+	public static void mutate(List<Individual> offsprings) {
+		
+		double pm = 0.3;
+		Random random = new Random();
+		
+		
+	}
+}

@@ -1,0 +1,205 @@
+import numpy as np
+import heapq
+import matplotlib.pyplot as plt
+from scipy.special import erf, erfinv
+from sklearn.mixture import GaussianMixture
+from pyswarm import pso
+import pandapower as pp
+import pandapower.plotting as plot
+
+# Parameters for IEEE 33-Bus System
+def create_modified_33_bus_system():
+    # Create an empty network
+    net = pp.create_empty_network()
+    
+    # Create buses
+    buses = []
+    for i in range(1, 34):
+        bus = pp.create_bus(net, vn_kv=12.66, name=f'Bus {i}')
+        buses.append(bus)
+    
+    # Create lines
+    lines = [
+        (1, 2), (1, 3), (2, 4), (2, 5), (3, 6), (4, 7), (4, 8), (5, 9),
+        (6, 10), (7, 11), (7, 12), (8, 13), (9, 14), (9, 15), (10, 16),
+        (10, 17), (11, 18), (12, 19), (13, 20), (14, 21), (15, 22),
+        (16, 23), (17, 24), (18, 25), (19, 26), (20, 27), (21, 28),
+        (22, 29), (23, 30), (24, 31), (25, 32), (26, 33)
+    ]
+
+    for line in lines:
+        pp.create_line(net, from_bus=buses[line[0]-1], to_bus=buses[line[1]-1],
+                        length_km=1, std_type="NAYY 4x50 SE", name=f'Line {line[0]}-{line[1]}')
+    
+    # Create loads
+    loads = [
+        (2, 0.5), (5, 0.6), (8, 0.7), (11, 0.8), (14, 0.9),
+        (17, 1.0), (20, 1.1), (23, 1.2), (26, 1.3), (29, 1.4),
+        (32, 1.5)
+    ]
+    
+    for load in loads:
+        pp.create_load(net, bus=buses[load[0]-1], p_mw=load[1], q_mvar=0, name=f'Load {load[0]}')
+    
+    # Create generators
+    generators = [
+        (1, 0.8), (4, 0.9), (7, 1.0), (10, 1.1), (13, 1.2),
+        (16, 1.3), (19, 1.4), (22, 1.5), (25, 1.6), (28, 1.7),
+        (31, 1.8)
+    ]
+    
+    for gen in generators:
+        pp.create_gen(net, bus=buses[gen[0]-1], p_mw=gen[1], vm_pu=1.02, name=f'Gen {gen[0]}')
+
+    return net
+
+# Visualization of the IEEE 33-Bus System
+def visualize_network(net):
+    plot.simple_plot(net, plot_loads=True, plot_generators=True, plot_lines=True, plot_buses=True)
+    plt.show()
+
+# Parameters
+T = 24  # Time period
+n_lines = 5  # Number of lines
+n_states = 10  # Number of SOC states
+max_soc = 100  # Max SOC
+min_soc = 20  # Min SOC
+P_target = np.random.normal(50, 5, T)  # Target peak power
+P_load = np.random.normal(50, 10, T)  # Actual load profile
+resistance_lines = np.random.uniform(low=0.1, high=1, size=(n_lines,))
+current_lines = np.random.uniform(low=1, high=10, size=(n_lines, T))
+charging_costs = np.random.uniform(low=0.1, high=0.5, size=(T,))
+discharging_costs = np.random.uniform(low=0.1, high=0.5, size=(T,))
+battery_degradation_costs = np.random.uniform(low=0.05, high=0.2, size=(T,))
+P_charge_max = 10
+P_discharge_max = 10
+P_plug_max = 15
+SOC_min_v2g = 30
+K = 0.5
+Cm = 50
+V = 400
+eta_ch = 0.9
+eta_dis = 0.9
+EPAR = 200
+peak_hours = range(17, 20)  # Define peak hours as 5 PM to 8 PM
+
+# Parameters for Load Generation using LHS
+mu_l = 50
+sigma_l = 10
+N = 1000
+
+# Generate stratified samples using LHS
+r = np.linspace(0, 1, N + 1)[:-1] + np.random.uniform(0, 1 / N, N)
+X = mu_l + sigma_l * np.sqrt(2) * erfinv(2 * r - 1)
+
+# Plot Load Generation
+plt.hist(X, bins=30, density=True, alpha=0.6, color='g')
+plt.title("Load Generation using LHS")
+plt.xlabel("Load Value")
+plt.ylabel("Density")
+plt.show()
+
+# Parameters for EV Connections/Disconnections
+N_h = 1000
+C_vph = 2
+PEL = 0.3
+total_time = 24
+
+# Calculate total EVs
+N_EV = int(N_h * C_vph * PEL)
+
+# Initialize event queue
+event_queue = []
+connection_times = np.random.uniform(0, total_time, N_EV)
+disconnection_times = np.random.uniform(0, total_time, N_EV)
+for time in connection_times:
+    heapq.heappush(event_queue, (time, 'connect'))
+for time in disconnection_times:
+    heapq.heappush(event_queue, (time, 'disconnect'))
+
+# Initialize EV state
+connected_evs = 0
+EV_log = []
+while event_queue:
+    event_time, event_type = heapq.heappop(event_queue)
+    if event_type == 'connect':
+        connected_evs += 1
+    elif event_type == 'disconnect':
+        connected_evs -= 1
+    EV_log.append((event_time, connected_evs))
+
+EV_log = np.array(EV_log)
+
+# Plot EV Connections and Disconnections
+plt.plot(EV_log[:, 0], EV_log[:, 1], marker='o')
+plt.title("EV Connections and Disconnections Over Time")
+plt.xlabel("Time (hours)")
+plt.ylabel("Number of Connected EVs")
+plt.show()
+
+# GMM for Arrival and Departure Times
+arrival_times = np.random.normal(10, 2, 500)
+departure_times = np.random.normal(18, 2, 500)
+
+gmm_arrival = GaussianMixture(n_components=2)
+gmm_arrival.fit(arrival_times.reshape(-1, 1))
+
+gmm_departure = GaussianMixture(n_components=2)
+gmm_departure.fit(departure_times.reshape(-1, 1))
+
+# Plot GMM
+plt.figure(figsize=(12, 6))
+plt.hist(arrival_times, bins=30, density=True, alpha=0.6, color='r', label='Arrival Times')
+plt.hist(departure_times, bins=30, density=True, alpha=0.6, color='b', label='Departure Times')
+plt.title("Histogram of Arrival and Departure Times with GMM")
+plt.xlabel("Time")
+plt.ylabel("Density")
+plt.legend()
+plt.show()
+
+# Daily Distance Traveled using Log-Normal Distribution
+mu_d = 3  # Mean of the natural log of distance
+sigma_d = 0.5  # Standard deviation of the natural log of distance
+
+# Generate daily distances
+d = np.random.lognormal(mean=mu_d, sigma=sigma_d, size=T)
+
+# Plot Daily Distances
+plt.hist(d, bins=30, density=True, alpha=0.6, color='b')
+plt.title("Daily Distance Traveled using Log-Normal Distribution")
+plt.xlabel("Distance (km)")
+plt.ylabel("Density")
+plt.show()
+
+# Energy Consumption Increment (ECI) on Highway
+Rc = 0.1  # Road coefficient
+Rand = np.random.uniform(0, 1, T)  # Random values between 0 and 1
+Phw = 0.3  # Probability of highway usage
+
+# Calculate ECI for each day
+ECI_hw = Rc * (1 + Rand) * Phw
+
+# Plot ECI
+plt.plot(range(T), ECI_hw, marker='o')
+plt.title("Energy Consumption Increment (ECI) on Highway")
+plt.xlabel("Time (hours)")
+plt.ylabel("ECI")
+plt.show()
+
+# PSO Optimization Function
+def objective_function(x):
+    # Placeholder function: Implement your actual optimization logic here
+    return np.sum(x**2)
+
+lb = np.zeros(n_lines)  # Lower bounds
+ub = np.ones(n_lines) * 10  # Upper bounds
+
+# Perform PSO
+xopt, fopt = pso(objective_function, lb, ub, swarmsize=50, maxiter=100)
+
+print(f"Optimal Parameters: {xopt}")
+print(f"Objective Function Value: {fopt}")
+
+# Create and visualize the network
+net = create_modified_33_bus_system()
+visualize_network(net)

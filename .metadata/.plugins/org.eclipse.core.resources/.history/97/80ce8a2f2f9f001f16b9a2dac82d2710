@@ -1,0 +1,14 @@
+package com.nsga;
+
+import java.util.Set;
+
+class Temporary{
+	Set<Individual> set;
+	int n;
+	public Temporary() {
+	}
+}
+
+public class AssignRank {
+
+}

@@ -1,0 +1,10 @@
+package com.zdt1;
+
+import java.util.List;
+
+public class Scaling {
+	
+	public static void scale(List<Individual> population) {
+		
+	}
+}

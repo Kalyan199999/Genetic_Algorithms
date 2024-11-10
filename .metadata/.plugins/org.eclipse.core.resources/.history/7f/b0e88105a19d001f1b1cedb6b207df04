@@ -1,0 +1,8 @@
+package com.knapsack;
+
+public class Population {
+	
+	public static void generatePopulation() {
+		
+	}
+}

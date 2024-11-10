@@ -1,0 +1,11 @@
+package com.knapsack;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Population {
+	
+	public static void generatePopulation(List<Individual> population = new ArrayList<Individual>();) {
+		
+	}
+}

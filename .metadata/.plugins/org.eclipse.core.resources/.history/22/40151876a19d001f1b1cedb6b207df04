@@ -1,0 +1,24 @@
+package com.knapsack;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class Population {
+	
+	
+	
+	public static void generatePopulation(List<Individual> population,int N ) {
+		Random random = new Random(); = new Random();
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<population.get(i).chromosome.length;j++)
+			{
+
+				population.get(i).chromosome[j] = random.nextInt(0,2);
+			}
+		}
+		
+	}
+}

@@ -1,0 +1,10 @@
+package com.nsga;
+
+public class Mutation {
+	
+	
+	public static void mutate() {
+		
+	}
+
+}

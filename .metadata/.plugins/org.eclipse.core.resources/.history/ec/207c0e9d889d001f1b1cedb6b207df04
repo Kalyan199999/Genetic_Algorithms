@@ -1,0 +1,34 @@
+package com.generalframework;
+
+import java.util.List;
+
+public class EvaluateObjectives {
+	
+	EvaluateObjectives(){
+//		constructor
+	}
+	
+//	Evaluate the population
+	public static void evaluateCan(List<Individual> population,int N) {
+		double pi = Math.PI , cost = 0.065;
+		
+		for(int i=0;i<N;i++)
+		{
+			int d = population.get(i).XBIN[0];
+			int h = population.get(i).XBIN[1];
+			
+			if( ( pi * (d*d*h) ) /4  >= 300.00)
+			{
+				population.get(i).OBJECTIVE_VALUE = cost*( (pi*d*d)/2 + (pi*d*h) ) ;
+				
+				population.get(i).FITNESS = population.get(i).OBJECTIVE_VALUE;
+			}
+			else 
+			{
+				population.get(i).OBJECTIVE_VALUE = Double.MAX_VALUE;
+				population.get(i).FITNESS = population.get(i).OBJECTIVE_VALUE;
+			}
+		}
+	}
+
+}
