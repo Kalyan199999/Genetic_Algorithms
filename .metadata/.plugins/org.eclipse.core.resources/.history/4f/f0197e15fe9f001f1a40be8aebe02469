@@ -12,15 +12,15 @@ public class Main {
 		for(Individual ind:population)
 		{
 			
-//			for(int i=0;i<ind.X.length;i++)
-//			{
-//				System.out.print(ind.X[i]+"  ");
-//			}
-			
-			for(int i=0;i<ind.objectives.length;i++)
+			for(int i=0;i<ind.X.length;i++)
 			{
-				System.out.print(ind.objectives[i]+"     ");
+				System.out.print(ind.X[i]+"  ");
 			}
+			
+//			for(int i=0;i<ind.objectives.length;i++)
+//			{
+//				System.out.print(ind.objectives[i]+"     ");
+//			}
 
 			System.out.println();
 		}
@@ -32,9 +32,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		int N = 100;
+		int N = 50;
 		
-		int t = 1 , T = 100;
+		int t = 1 , T = 10;
 		
 		List<Individual> population = new ArrayList<Individual>();
 
@@ -51,6 +51,7 @@ public class Main {
 		
 		while(t <= T)
 		{
+
 			show(population,t);
 			
 			List<Individual> selected = new ArrayList<Individual>();
@@ -83,6 +84,7 @@ public class Main {
 			Strategy.surviedSolution(population, fronts, N);
 			
 			t++;
+			
 		}
 		
 	}

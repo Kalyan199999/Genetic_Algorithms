@@ -126,18 +126,18 @@ public class AssignRank {
 		
 	}
 	
-//	private static void show(List<List<Individual>> fronts) {
-//		
-//		for(List<Individual> list:fronts)
-//		{
-//			for(Individual ind:list)
-//			{
-//				System.out.println(ind.crowding_distance);
-//			}
-//		}
-//		
-//		System.out.println("**********************************************************************");
-//	}
+	private static void show(List<List<Individual>> fronts) {
+		
+		for(List<Individual> list:fronts)
+		{
+			for(Individual ind:list)
+			{
+				System.out.println(ind.crowding_distance);
+			}
+		}
+		
+		System.out.println("**********************************************************************");
+	}
 	
 	public static void findRank(List<Individual> population , List<List<Individual>> fronts_2  ) {
 		
