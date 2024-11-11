@@ -20,6 +20,7 @@ public class Evaluate {
 		
 		for(Individual ind : population)
 		{
+			ind.rank = 0;
 			
 			for(int i=0;i<ind.objectives.length;i++)
 			{
@@ -40,7 +41,6 @@ public class Evaluate {
             	   Double h_x = 1 - (Math.sqrt( ind.objectives[0] / g_x ));
             	   
 					ind.objectives[i] = g_x*h_x;
-					
 					
 					break;
 				}

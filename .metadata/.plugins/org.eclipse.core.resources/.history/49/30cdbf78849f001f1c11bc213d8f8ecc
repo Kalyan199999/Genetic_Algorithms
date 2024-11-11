@@ -1,0 +1,9 @@
+package com.nsga;
+import java.util.List;
+
+public class Selection {
+	
+	public static void selected( List<Individual> offsprings  , List<Individual> offsprings ) {
+		
+	}
+}

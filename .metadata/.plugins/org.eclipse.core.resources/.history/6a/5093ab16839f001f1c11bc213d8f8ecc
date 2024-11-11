@@ -1,0 +1,63 @@
+package com.nsga;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class CrowdingDistance {
+	
+	private static void sortList(List<Individual> F , int i) {
+		
+		Collections.sort(F,(a,b)-> (int) a.objectives[i] - (int)b.objectives[i]);
+		
+	}
+	
+	private static void calculateDistance(List<Individual> F )
+	{	
+		int r = F.size();
+		
+		if(r <= 2) return;
+		
+		List<Individual> list = new ArrayList<Individual>(F);
+
+		for(Individual ind:F)
+		{
+			int n = ind.objectives.length;
+			
+			ind.crowding_distance = 0;
+			
+			for(int i=0;i<n;i++)
+			{
+				sortList(list,i);
+				
+				list.getFirst().crowding_distance = Double.MAX_VALUE;
+				
+				list.getLast().crowding_distance = Double.MAX_VALUE;
+				
+				for(int j=1;j<r-1;j++)
+				{
+					if( list.get(j).crowding_distance != Double.MAX_VALUE )
+					{
+						list.get(j).crowding_distance += ( list.get(j+1).objectives[i] - list.get(j-1).objectives[i] ) / ( list.getLast().objectives[i] - list.getFirst().objectives[i] ) ;
+					}
+				}
+				
+			}
+		}
+		
+		F.clear();
+		F.addAll(list;)
+	}
+	
+	
+	public static void crowding_distance(List<List<Individual>> fronts ) {
+		
+		for(List<Individual> F : fronts)
+		{
+			calculateDistance(F);
+		}
+		
+		
+	}
+
+}

@@ -1,0 +1,11 @@
+package com.nsga;
+
+import java.util.List;
+
+public class Strategy {
+	
+	public static void surviedSolution(List<Individual> population , List<List<Individual>> fronts , int N ) {
+		population.clear();
+		
+	}
+}

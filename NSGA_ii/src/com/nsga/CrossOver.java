@@ -7,6 +7,7 @@ import java.util.Random;
 public class CrossOver {
 	
 	static Random random = new Random();
+	
 	static int n_c = 15;
 	
 	private static double calulate_beta() {
@@ -21,7 +22,8 @@ public class CrossOver {
 		{
 			res = Math.pow( (2*u_i) , denominator);
 		}
-		else {
+		else 
+		{
 			res = Math.pow( ( 1/ ( 2*(1-u_i)) ) , denominator);
 		}
 		
@@ -46,7 +48,7 @@ public class CrossOver {
 //		
 //	}
 	
-	public static void binaryTournment(List<Individual> tournment , List<Individual> offsprings) {
+	public static void cross(List<Individual> tournment , List<Individual> offsprings) {
 		
 		while(!tournment.isEmpty())
 		{
@@ -55,6 +57,7 @@ public class CrossOver {
 			Individual parent_2 = tournment.remove(  random.nextInt(0 , tournment.size()) );
 			
 			Individual offspring_1 = new Individual(parent_1.objectives.length, parent_1.X.length,parent_1.id);
+			
 			Individual offspring_2 = new Individual(parent_1.objectives.length, parent_1.X.length , parent_2.id);
 			
 			int n = parent_1.X.length;
@@ -111,7 +114,7 @@ public class CrossOver {
 			tournment.add(ind);
 		}
 		
-		binaryTournment(tournment, offsprings);
+		cross(tournment, offsprings);
 		
 		
 		

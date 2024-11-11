@@ -1,0 +1,16 @@
+package com.nsga;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class Selection {
+	
+	Random random = new Random();
+	
+	public static void selected( List<Individual> population  , List<Individual> offsprings ) {
+		
+		List<Individual> t_1 = new ArrayList<Individual>(population);
+
+		List<Individual> t_2 = new ArrayList<Individual>(population);
+	}
+}

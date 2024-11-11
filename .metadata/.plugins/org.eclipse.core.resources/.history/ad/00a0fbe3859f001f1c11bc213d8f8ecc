@@ -1,0 +1,8 @@
+package com.nsga;
+
+public class Strategy {
+	
+	public static void surviedSolution() {
+		
+	}
+}

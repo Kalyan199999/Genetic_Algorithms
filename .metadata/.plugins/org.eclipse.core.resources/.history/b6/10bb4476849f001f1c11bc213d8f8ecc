@@ -1,0 +1,8 @@
+package com.nsga;
+
+public class Selection {
+	
+	public static void selected() {
+		
+	}
+}

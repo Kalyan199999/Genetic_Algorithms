@@ -1,17 +1,15 @@
 package com.nsga;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.HashSet;
 
 class Temporary{
 	Set<Individual> set;
 	int id;
 	int n;
+	
 	public Temporary() {
 		set = new HashSet<>();
 		n = 0;
@@ -28,50 +26,49 @@ public class AssignRank {
 		int n = soln_1.objectives.length;
 		
 //		checks whether the soln-1 dominates the soln-2
-		
-		boolean flag = false;
+		boolean flag = true;
 		
 		for(int k=0;k<n;k++)
 		{
 			double obj_1 = soln_1.objectives[k];
+			
 			double obj_2 = soln_2.objectives[k];
 			
-//			System.out.println(obj_1+" "+obj_2);
 			
 			if(obj_1 > obj_2)
 			{
-				return false;
-				
+				flag =  false;
+				break;
 			}
-			else {
-				flag = true;
-			}
+			
 		}
 		
 		return flag;
 	}
 	
-	private static void stage_1( List<Individual> population , PriorityQueue<Individual> queue ,List<Temporary> ranks) {
-		
+	private static void stage_1( List<Individual> population , List<Individual> queue , List<Temporary> ranks) 
+	{
 		for(int i=0;i<N;i++)
 		{
 			Individual P = population.get(i);
 			
-			for(int j=0; j<N && i!=j;j++)
+			for(int j=0; j<N && i!=j ;j++)
 			{
 				Individual Q = population.get(j);
 				
 				if( checkDominance(P, Q) )
 				{
-
-					System.out.println(i);
-					
 					ranks.get(i).set.add(Q);
+					
+//					System.out.println(i);
 				}
 				else if( checkDominance( Q , P ) ) 
 				{
-
 					ranks.get(i).n += 1;
+//					System.out.println(j);
+				}
+				else {
+//					System.out.println("kalyan");
 				}
 			}
 			
@@ -79,27 +76,29 @@ public class AssignRank {
 			{
 				population.get(i).rank = 1;
 				
-				queue.offer(population.get(i));
+				queue.add(population.get(i));
 			}
 		}
 		
-//		System.out.println(queue.size());
 		
 	}
 	
-	private static void stage_2(List<Individual> population,Queue<PriorityQueue<Individual>> fronts , List<Temporary> ranks )
+	private static void stage_2(List<Individual> population , List<List<Individual>> fronts , List<Temporary> ranks , List<List<Individual>> fronts_2 )
 	{
 		int i = 1;
 		
 		while(!fronts.isEmpty())
 		{
-			PriorityQueue<Individual> queue = fronts.poll();
+			List<Individual> queue = fronts.removeFirst();
 			
-			PriorityQueue<Individual> store = new PriorityQueue<Individual>( (a,b)-> (int) b.crowding_distance - (int) a.crowding_distance );
+			fronts_2.add(new ArrayList<Individual>(queue));
+			
+			List<Individual> store = new ArrayList<Individual>();
 			
 			while(!queue.isEmpty())
 			{
-				Individual ind = queue.poll();
+
+				Individual ind = queue.removeFirst();
 				
 				int id = ind.id;
 				
@@ -109,10 +108,9 @@ public class AssignRank {
 					
 					if(ranks.get(solution.id).n == 0)
 					{
-//						System.out.println("kalyan");
 						solution.rank = i+1;
 						
-						store.offer(solution);
+						store.add(solution);
 					}
 				}
 				
@@ -122,19 +120,32 @@ public class AssignRank {
 			i++;
 			
 			if(!store.isEmpty()) {
-				fronts.offer(store);
+				fronts.add(store);
 			}
 		}
 		
 	}
 	
-	public static void findRank(List<Individual> population) {
+	private static void show(List<List<Individual>> fronts) {
 		
-		Queue<PriorityQueue<Individual>> fronts = new LinkedList<>();
+		for(List<Individual> list:fronts)
+		{
+			for(Individual ind:list)
+			{
+				System.out.println(ind.crowding_distance);
+			}
+		}
+		
+		System.out.println("**********************************************************************");
+	}
+	
+	public static void findRank(List<Individual> population , List<List<Individual>> fronts_2  ) {
+		
+		List<List<Individual>> fronts = new ArrayList<>();
 		
 		List<Temporary> ranks = new ArrayList<Temporary>();
 		
-		N =population.size();
+		N = population.size();
 		
 		for(int i=0;i<N;i++)
 		{
@@ -142,22 +153,16 @@ public class AssignRank {
 			ranks.get(i).id = i;
 		}
 		
-		PriorityQueue<Individual> queue_1 = new PriorityQueue<Individual>((a,b)-> (int) b.crowding_distance - (int) a.crowding_distance);
+		List<Individual> queue_1 =  new ArrayList<>();
 		
 		stage_1(population, queue_1, ranks);
-
-//		System.out.println(queue_1.size());
 		
 		fronts.add(queue_1);
-//		
-		stage_2(population, fronts, ranks);
 		
-//		for(Temporary temp:ranks)
-//		{
-//			System.out.println(temp.id +" "+temp.n+" "+population.get(temp.id).rank);
-//		}
+		stage_2(population, fronts, ranks , fronts_2);
+
+		CrowdingDistance.crowding_distance(fronts_2);
 		
-		System.out.println("*********************************************************");
 		
 		
 	}

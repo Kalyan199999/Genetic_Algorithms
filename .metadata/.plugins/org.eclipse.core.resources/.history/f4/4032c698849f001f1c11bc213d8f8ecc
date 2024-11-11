@@ -1,0 +1,13 @@
+package com.nsga;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Selection {
+	
+	public static void selected( List<Individual> population  , List<Individual> offsprings ) {
+		
+		List<Individual> t_1 = new ArrayList<Individual>(population);
+
+		List<Individual> t_2 = new ArrayList<Individual>(population);
+	}
+}
